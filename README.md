@@ -17,12 +17,13 @@ by Mengye Ren, Ryan Kiros & Richard Zemel. The model architectures vaires slight
 - Download the [pretrained VGG-16 tensorflow model][7] and save it in the `Data` folder.
 
 ## Usage
-- Dowload [pickle files][7]
+- Dowload [pickle files][7] into data folder
 - Extract the fc-7 image features using:
 ```
 python extract_fc7.py --split=train
 python extract_fc7.py --split=val
 ```
+OR download files from [google drive][7]
 
 - <b>Training</b>
   * Basic usage `python train.py`
