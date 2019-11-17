@@ -34,14 +34,14 @@ def main():
 
 	args = parser.parse_args()
 
-	print "Image:", args.image_path
-	print "Question:", args.question
+	print("Image:", args.image_path)
+	print("Question:", args.question)
 
 	vocab_data = data_loader.get_question_answer_vocab(args.data_dir)
-	qvocab = vocab_data['question_vocab']
-	q_map = { vocab_data['question_vocab'][qw] : qw for qw in vocab_data['question_vocab']}
+	qvocab = vocab_data[b'question_vocab']
+	q_map = { vocab_data[b'question_vocab'][qw] : qw for qw in vocab_data[b'question_vocab']}
 	
-	fc7_features = utils.extract_fc7_features(args.image_path, join(args.data_dir, 'vgg16.tfmodel'))
+	fc7_features = utils.extract_fc7_features(args.image_path, 'Data/vgg16-20160129.tfmodel')
 	
 	model_options = {
 		'num_lstm_layers' : args.num_lstm_layers,
@@ -50,23 +50,23 @@ def main():
 		'word_emb_dropout' : args.word_emb_dropout,
 		'image_dropout' : args.image_dropout,
 		'fc7_feature_length' : args.fc7_feature_length,
-		'lstm_steps' : vocab_data['max_question_length'] + 1,
-		'q_vocab_size' : len(vocab_data['question_vocab']),
-		'ans_vocab_size' : len(vocab_data['answer_vocab'])
+		'lstm_steps' : vocab_data[b'max_question_length'] + 1,
+		'q_vocab_size' : len(vocab_data[b'question_vocab']),
+		'ans_vocab_size' : len(vocab_data[b'answer_vocab'])
 	}
 	
-	question_vocab = vocab_data['question_vocab']
+	question_vocab = vocab_data[b'question_vocab']
 	word_regex = re.compile(r'\w+')
-	question_ids = np.zeros((1, vocab_data['max_question_length']), dtype = 'int32')
+	question_ids = np.zeros((1, vocab_data[b'max_question_length']), dtype = 'int32')
 	question_words = re.findall(word_regex, args.question)
-	base = vocab_data['max_question_length'] - len(question_words)
+	base = vocab_data[b'max_question_length'] - len(question_words)
 	for i in range(0, len(question_words)):
 		if question_words[i] in question_vocab:
 			question_ids[0][base + i] = question_vocab[ question_words[i] ]
 		else:
 			question_ids[0][base + i] = question_vocab['UNK']
 
-	ans_map = { vocab_data['answer_vocab'][ans] : ans for ans in vocab_data['answer_vocab']}
+	ans_map = { vocab_data[b'answer_vocab'][ans] : ans for ans in vocab_data[b'answer_vocab']}
 	model = vis_lstm_model.Vis_lstm_model(model_options)
 	input_tensors, t_prediction, t_ans_probab = model.build_generator()
 	sess = tf.InteractiveSession()
@@ -79,12 +79,12 @@ def main():
     })
 
 	
-	print "Ans:", ans_map[pred[0]]
+	print("Ans:", ans_map[pred[0]])
 	answer_probab_tuples = [(-answer_probab[0][idx], idx) for idx in range(len(answer_probab[0]))]
 	answer_probab_tuples.sort()
-	print "Top Answers"
+	print("Top Answers")
 	for i in range(5):
-		print ans_map[ answer_probab_tuples[i][1] ]
+		print(ans_map[ answer_probab_tuples[i][1] ])
 
 if __name__ == '__main__':
 	main()

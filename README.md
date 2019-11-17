@@ -7,9 +7,9 @@ by Mengye Ren, Ryan Kiros & Richard Zemel. The model architectures vaires slight
 ![Model architecture](http://i.imgur.com/Jvixx2W.jpg)
 
 ## Requirements
-- Python 2.7.6
-- [Tensorflow][3]
-- [h5py][4]
+- Python 3
+- [Tensorflow 1.14][3]
+- [h5py 2.9.0][4]
 
 
 #### Datasets
@@ -17,7 +17,7 @@ by Mengye Ren, Ryan Kiros & Richard Zemel. The model architectures vaires slight
 - Download the [pretrained VGG-16 tensorflow model][7] and save it in the `Data` folder.
 
 ## Usage
-
+- Dowload [pickle files][7]
 - Extract the fc-7 image features using:
 ```
 python extract_fc7.py --split=train
@@ -82,6 +82,6 @@ python predict.py --image_path="Data/sample.jpg" --question="Which animal is thi
 [4]: http://www.h5py.org/
 [5]: http://mscoco.org/
 [6]: http://visualqa.org/
-[7]: https://github.com/ry/tensorflow-vgg16
+[7]: https://drive.google.com/drive/u/1/folders/19oNY_3OoYLTiK0GmOTQyzZa4NIfye0oI
 [8]: https://github.com/jazzsaxmafia/show_attend_and_tell.tensorflow
-[9]: https://drive.google.com/folderview?id=0B30fmeZ1slbBU1JSRHdiWkF4NUk&usp=sharing
+[9]: https://drive.google.com/drive/u/1/folders/19oNY_3OoYLTiK0GmOTQyzZa4NIfye0oI

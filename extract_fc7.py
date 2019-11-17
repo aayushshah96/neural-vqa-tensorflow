@@ -9,12 +9,13 @@ import numpy as np
 import pickle
 import h5py
 import time
+import io
 
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--split', type=str, default='train',
                        help='train/val')
-	parser.add_argument('--model_path', type=str, default='Data/vgg16.tfmodel',
+	parser.add_argument('--model_path', type=str, default='Data/vgg16-20160129.tfmodel',
                        help='Pretrained VGG16 Model')
 	parser.add_argument('--data_dir', type=str, default='Data',
                        help='Data directory')
@@ -25,7 +26,7 @@ def main():
 
 	args = parser.parse_args()
 	
-	vgg_file = open(args.model_path)
+	vgg_file = io.open(args.model_path, mode='rb')
 	vgg16raw = vgg_file.read()
 	vgg_file.close()
 
@@ -38,20 +39,21 @@ def main():
 	graph = tf.get_default_graph()
 
 	for opn in graph.get_operations():
-		print "Name", opn.name, opn.values()
+		print("Name", opn.name, opn.values())
 
 	all_data = data_loader.load_questions_answers(args)
+	#print(all_data)
 	if args.split == "train":
-		qa_data = all_data['training']
+		qa_data = all_data[b'training']
 	else:
-		qa_data = all_data['validation']
+		qa_data = all_data[b'validation']
 	
 	image_ids = {}
 	for qa in qa_data:
-		image_ids[qa['image_id']] = 1
+		image_ids[qa[b'image_id']] = 1
 
 	image_id_list = [img_id for img_id in image_ids]
-	print "Total Images", len(image_id_list)
+	print("Total Images", len(image_id_list))
 	
 	
 	sess = tf.Session()
@@ -77,23 +79,23 @@ def main():
 		fc7_batch = sess.run(fc7_tensor, feed_dict = feed_dict)
 		fc7[(idx - count):idx, :] = fc7_batch[0:count,:]
 		end = time.clock()
-		print "Time for batch 10 photos", end - start
-		print "Hours For Whole Dataset" , (len(image_id_list) * 1.0)*(end - start)/60.0/60.0/10.0
+		print("Time for batch 10 photos", end - start)
+		print("Hours For Whole Dataset" , (len(image_id_list) * 1.0)*(end - start)/60.0/60.0/10.0)
 
-		print "Images Processed", idx
+		print("Images Processed", idx)
 
 		
 
-	print "Saving fc7 features"
+	print("Saving fc7 features")
 	h5f_fc7 = h5py.File( join(args.data_dir, args.split + '_fc7.h5'), 'w')
 	h5f_fc7.create_dataset('fc7_features', data=fc7)
 	h5f_fc7.close()
 
-	print "Saving image id list"
+	print("Saving image id list")
 	h5f_image_id_list = h5py.File( join(args.data_dir, args.split + '_image_id_list.h5'), 'w')
 	h5f_image_id_list.create_dataset('image_id_list', data=image_id_list)
 	h5f_image_id_list.close()
-	print "Done!"
+	print("Done!")
 
 if __name__ == '__main__':
 	main()

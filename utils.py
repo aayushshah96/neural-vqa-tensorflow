@@ -1,3 +1,4 @@
+import io
 import numpy as np
 from scipy import misc
 import tensorflow as tf
@@ -18,7 +19,7 @@ def load_image_array(image_file):
 
 # FOR PREDICTION ON A SINGLE IMAGE
 def extract_fc7_features(image_path, model_path):
-	vgg_file = open(model_path)
+	vgg_file = io.open(model_path,mode='rb')
 	vgg16raw = vgg_file.read()
 	vgg_file.close()
 

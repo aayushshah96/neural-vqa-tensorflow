@@ -9,7 +9,7 @@ class Vis_lstm_model:
 		return tf.Variable(tf.zeros([dim_out]), name=name)
 
 	def __init__(self, options):
-		with tf.device('/cpu:0'):
+		with tf.device('/GPU:0'):
 			self.options = options
 
 			# +1 for zero padding
