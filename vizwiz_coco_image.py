@@ -19,8 +19,7 @@ target_ext = 'jpg'                                  # File extension/type (used 
 target_dir = os.path.join(os.getcwd(),'Data','train_2014')       # Directory to move images onto
 
 images_dir = os.path.join(os.getcwd(),'Data','vizwiz','Images')    # Directory to move images from
-_, _, image_names = next(os.walk(images_dir))       # Get all image names
-
+image_names = ['VizWiz_train_{0}.jpg'.format(str(i).zfill(12)) for i in range(20000)] # Get all image names
 
 for name in image_names:
     # Ignore hidden files and non matching file extensions (target_ext)
