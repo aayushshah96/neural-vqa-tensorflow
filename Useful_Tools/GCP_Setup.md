@@ -1,7 +1,12 @@
 Steps to use GCP for Training:
 
-1. Make a VM Instance (4CPU,15GB,100GB) and do NOT allocate a Tesla T4/P4 GPU
-2. Turn off Auto Start in Advanced Options
+1. Make a VM Instance and do NOT allocate a Tesla T4/P4 GPU:
+ - Zone: us-west1-b
+ - Machine type: n1-standard-4 (4 vCPUs, 15 GB memory)
+ - GPUs: 1 x NVIDIA Tesla T4
+ - Disk: Standard Persistent Disk- 100GB
+ - OS Image: Ubuntu, 18.04 LTS
+2. Set "Automatic Restart" to "off" in Advanced Options
 3. Enable ‘Allow access to all Cloud APIs’ in Cloud Access (2nd option)
 4. Start the instance
 5. Install conda:
