@@ -17,7 +17,7 @@ def main():
                        help='train/val')
 	parser.add_argument('--model_path', type=str, default='Data/train2014/Tri Training 2/vgg16-20160129.tfmodel',
                        help='Pretrained VGG16 Model')
-	parser.add_argument('--data_dir', type=str, default='Data/train2014/Tri Training 3/',
+	parser.add_argument('--data_dir', type=str, default='Data/',
                        help='Data directory')
 	parser.add_argument('--batch_size', type=int, default=10,
                        help='Batch Size')
@@ -42,24 +42,10 @@ def main():
 		print("Name", opn.name, opn.values())
 
         
-	all_data = data_loader.load_questions_answers(data_dir=args.data_dir)
-	#print(args)
-	#print(0/0)
-	#print(all_data.keys())
-	if args.split == "train":
-		qa_data = all_data['training']
-	else:
-		qa_data = all_data['validation']
-	
-	image_ids = {}
-	#print(qa_data[0])
-	#a = 5/0
-	for qa in qa_data:
-		image_ids[qa['image_id']] = 1
-
-	image_id_list = [img_id for img_id in image_ids]
+	image_id_list = [img_id for img_id in range(20000)]
+	#print(image_id_list[:5])
 	print("Total Images", len(image_id_list))
-	
+	#print(0/0)
 	
 	sess = tf.Session()
 	fc7 = np.ndarray( (len(image_id_list), 4096 ) )
@@ -73,7 +59,7 @@ def main():
 		for i in range(0, args.batch_size):
 			if idx >= len(image_id_list):
 				break
-			image_file = join(args.data_dir, '%s2014/COCO_%s2014_%.12d.jpg'%(args.split, args.split, image_id_list[idx]) )
+			image_file = join(args.data_dir, '%s_2014/VizWiz_%s_%.12d.jpg'%(args.split, args.split, image_id_list[idx]) )
 			image_batch[i,:,:,:] = utils.load_image_array(image_file)
 			idx += 1
 			count += 1

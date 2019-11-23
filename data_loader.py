@@ -7,7 +7,7 @@ import pprint
 import pickle
 import io
 
-def prepare_training_data(version = 2, data_dir = 'Data'):
+def prepare_training_data(version = 2, data_dir='Data/train2014/Tri Training 3/'):
 	if version == 1:
 		t_q_json_file = join(data_dir, 'MultipleChoice_mscoco_train2014_questions.json')
 		t_a_json_file = join(data_dir, 'mscoco_train2014_annotations.json')
@@ -34,19 +34,19 @@ def prepare_training_data(version = 2, data_dir = 'Data'):
 
 	print("Loading Training questions")
 	with open(t_q_json_file) as f:
-		t_questions = json.loads(f.read())
+		t_questions = json.loads(f.read(),encoding='bytes')
 	
 	print("Loading Training anwers")
 	with open(t_a_json_file) as f:
-		t_answers = json.loads(f.read())
+		t_answers = json.loads(f.read(),encoding="bytes")
 
 	print("Loading Val questions")
 	with open(v_q_json_file) as f:
-		v_questions = json.loads(f.read())
+		v_questions = json.loads(f.read(),encoding="bytes")
 	
 	print("Loading Val answers")
 	with open(v_a_json_file) as f:
-		v_answers = json.loads(f.read())
+		v_answers = json.loads(f.read(),encoding="bytes")
 
 	
 	print("Ans", len(t_answers['annotations']), len(v_answers['annotations']))
@@ -114,7 +114,7 @@ def prepare_training_data(version = 2, data_dir = 'Data'):
 
 	return data
 
-def load_questions_answers(version = 2, data_dir = 'Data'):
+def load_questions_answers(version = 2, data_dir = 'Data/'):
 	qa_data_file = join(data_dir, 'qa_data_file2.pkl'.format(version))
 	
 	if isfile(qa_data_file):
@@ -122,7 +122,7 @@ def load_questions_answers(version = 2, data_dir = 'Data'):
 			data = pickle.load(f, encoding="bytes")
 			return data
 
-def get_question_answer_vocab(version = 2, data_dir = 'Data'):
+def get_question_answer_vocab(version = 2, data_dir = 'Data/'):
 	vocab_file = join(data_dir, 'vocab_file2.pkl'.format(version))
 	vocab_data = pickle.load(open(vocab_file,'rb'), encoding="bytes")
 	return vocab_data
@@ -131,7 +131,7 @@ def make_answer_vocab(answers):
 	top_n = 1000
 	answer_frequency = {} 
 	for annotation in answers:
-		answer = annotation[b'multiple_choice_answer']
+		answer = annotation['multiple_choice_answer']
 		if answer in answer_frequency:
 			answer_frequency[answer] += 1
 		else:
@@ -147,7 +147,7 @@ def make_answer_vocab(answers):
 		ans = ans_freq[1]
 		answer_vocab[ans] = i
 
-	answer_vocab[b'UNK'] = top_n - 1
+	answer_vocab['UNK'] = top_n - 1
 	return answer_vocab
 
 
@@ -157,10 +157,10 @@ def make_questions_vocab(questions, answers, answer_vocab):
 
 	max_question_length = 0
 	for i,question in enumerate(questions):
-		ans = answers[i][b'multiple_choice_answer']
+		ans = answers[i]['multiple_choice_answer']
 		count = 0
 		if ans in answer_vocab:
-			question_words = re.findall(word_regex, question[b'question'])
+			question_words = re.findall(word_regex, question['question'])
 			for qw in question_words:
 				if qw in question_frequency:
 					question_frequency[qw] += 1
@@ -186,7 +186,7 @@ def make_questions_vocab(questions, answers, answer_vocab):
 		else:
 			break
 
-	qw_vocab[b'UNK'] = len(qw_vocab) + 1
+	qw_vocab['UNK'] = len(qw_vocab) + 1
 
 	return qw_vocab, max_question_length
 
@@ -201,4 +201,4 @@ def load_fc7_features(data_dir, split):
 		image_id_list = np.array(hf.get('image_id_list'))
 	return fc7_features, image_id_list
 
-#prepare_training_data(version = 2, data_dir = 'Data')
+prepare_training_data(version = 2, data_dir = 'Data/')

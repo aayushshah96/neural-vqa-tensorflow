@@ -18,13 +18,13 @@ def main():
                        help='word_emb_dropout')
 	parser.add_argument('--image_dropout', type=float, default=0.5,
                        help='image_dropout')
-	parser.add_argument('--data_dir', type=str, default='Data',
+	parser.add_argument('--data_dir', type=str, default='Data/train2014/Tri Training 2/',
                        help='Data directory')
 	parser.add_argument('--batch_size', type=int, default=195,
                        help='Batch Size')
 	parser.add_argument('--learning_rate', type=float, default=0.001,
                        help='Batch Size')
-	parser.add_argument('--epochs', type=int, default=200,
+	parser.add_argument('--epochs', type=int, default=50,
                        help='Expochs')
 	parser.add_argument('--debug', type=bool, default=False,
                        help='Debug')
@@ -46,7 +46,7 @@ def main():
 	for i in range(len(image_id_list)):
 		image_id_map[ image_id_list[i] ] = i
 
-	ans_map = { qa_data[b'answer_vocab'][ans] : ans for ans in qa_data[b'answer_vocab']}
+	ans_map = { qa_data['answer_vocab'][ans] : ans for ans in qa_data['answer_vocab']}
 
 	model_options = {
 		'num_lstm_layers' : args.num_lstm_layers,
@@ -55,9 +55,9 @@ def main():
 		'word_emb_dropout' : args.word_emb_dropout,
 		'image_dropout' : args.image_dropout,
 		'fc7_feature_length' : args.fc7_feature_length,
-		'lstm_steps' : qa_data[b'max_question_length'] + 1,
-		'q_vocab_size' : len(qa_data[b'question_vocab']),
-		'ans_vocab_size' : len(qa_data[b'answer_vocab'])
+		'lstm_steps' : qa_data['max_question_length'] + 1,
+		'q_vocab_size' : len(qa_data['question_vocab']),
+		'ans_vocab_size' : len(qa_data['answer_vocab'])
 	}
 	
 	
@@ -70,13 +70,14 @@ def main():
 
 	
 	saver = tf.train.Saver()
+	#saver.restore(sess, 'Data/train2014/Tri Training 3/Models/model39.ckpt')
 	if args.resume_model:
 		saver.restore(sess, args.resume_model)
 
 	for i in range(args.epochs):
 		batch_no = 0
 
-		while (batch_no*args.batch_size) < len(qa_data[b'training']):
+		while (batch_no*args.batch_size) < len(qa_data['training']):
 			sentence, answer, fc7 = get_training_batch(batch_no, args.batch_size, fc7_features, image_id_map, qa_data, 'train')
 			_, loss_value, accuracy, pred = sess.run([train_op, t_loss, t_accuracy, t_p], 
 				feed_dict={
@@ -97,27 +98,27 @@ def main():
 				print("Loss", loss_value, batch_no, i)
 				print("Training Accuracy", accuracy)
 			
-		save_path = saver.save(sess, "Data/Models/model{}.ckpt".format(i))
+		save_path = saver.save(sess, "Data/train2014/Tri Training 2/Models/model{}.ckpt".format(i))
 
 def get_training_batch(batch_no, batch_size, fc7_features, image_id_map, qa_data, split):
 	qa = None
 	if split == 'train':
-		qa = qa_data[b'training']
+		qa = qa_data['training']
 	else:
-		qa = qa_data[b'validation']
+		qa = qa_data['validation']
 
 	si = (batch_no * batch_size)%len(qa)
 	ei = min(len(qa), si + batch_size)
 	n = ei - si
-	sentence = np.ndarray( (n, qa_data[b'max_question_length']), dtype = 'int32')
-	answer = np.zeros( (n, len(qa_data[b'answer_vocab'])))
+	sentence = np.ndarray( (n, qa_data['max_question_length']), dtype = 'int32')
+	answer = np.zeros( (n, len(qa_data['answer_vocab'])))
 	fc7 = np.ndarray( (n,4096) )
 
 	count = 0
 	for i in range(si, ei):
-		sentence[count,:] = qa[i][b'question'][:]
-		answer[count, qa[i][b'answer']] = 1.0
-		fc7_index = image_id_map[ qa[i][b'image_id'] ]
+		sentence[count,:] = qa[i]['question'][:]
+		answer[count, qa[i]['answer']] = 1.0
+		fc7_index = image_id_map[ qa[i]['image_id'] ]
 		fc7[count,:] = fc7_features[fc7_index][:]
 		count += 1
 	

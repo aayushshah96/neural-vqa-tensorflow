@@ -87,14 +87,14 @@ def main():
 			for idx, p in enumerate(pred):
 				print ans_map[p], ans_map[ np.argmax(answer[idx])]
 
-		correct_predictions = np.equal(pred, np.argmax(answer, 1))
-		correct_predictions = correct_predictions.astype('float32')
-		accuracy = correct_predictions.mean()
-		print("Acc", accuracy)
-		avg_accuracy += accuracy
-		total += 1
+		#correct_predictions = np.equal(pred, np.argmax(answer, 1))
+		#correct_predictions = correct_predictions.astype('float32')
+		#accuracy = correct_predictions.mean()
+		#print("Acc", accuracy)
+		#avg_accuracy += accuracy
+		#total += 1
 	
-	print("Acc", avg_accuracy/total)
+	#print("Acc", avg_accuracy/total)
 
 
 def get_batch(batch_no, batch_size, fc7_features, image_id_map, qa_data, split):
